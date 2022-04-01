@@ -23,8 +23,9 @@ class ExperimentPlatformUnitTest(TestCase):
     def test_split_traffic(self):
         ids = np.arange(100**2)
         data = pd.DataFrame({"id": ids})
-        experiment_id = "experiment_id_400"
+        experiment_id = "exp12"
         control_group_size = 0.5  # 50/50 split
+        Platform.split_traffic(1765984, experiment_id, control_group_size)
         data["bucket"] = data["id"].apply(
             lambda id: Platform.split_traffic(id, experiment_id, control_group_size)
         )
@@ -32,3 +33,11 @@ class ExperimentPlatformUnitTest(TestCase):
         control_count = data[data.bucket == "c"].bucket.count()
         greater_count = test_count if test_count > control_count else control_count
         self.assertAlmostEqual(test_count, control_count, delta=0.05 * greater_count)
+
+    def test_split_traffic_naive(self):
+        ids = np.arange(100**2)
+        data = pd.DataFrame({"id": ids})
+        data["bucket"] = data["id"].apply(lambda id: Platform.split_traffic_naive(id))
+        test_count = data[data.bucket == "t"].bucket.count()
+        control_count = data[data.bucket == "c"].bucket.count()
+        self.assertNotEqual(test_count, control_count)

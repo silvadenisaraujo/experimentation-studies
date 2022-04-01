@@ -78,6 +78,26 @@ class Platform:
         else:
             return "c"
 
+    @classmethod
+    def split_traffic_naive(cls, id: int, prime_n: int = 7) -> str:
+        """
+        Split user traffic into two groups.
+        't' for test group, 'c' for control group.
+        Based on a naive modulo arithmetic.
+
+        Args:
+            id (int): An stable user id
+            prime_n (int): A prime number
+
+        Returns:
+            str: 't' for test or 'c' for control group
+        """
+        ab_split = id % prime_n
+        if ab_split > prime_n // 2:
+            return "t"
+        else:
+            return "c"
+
     def calculate_significance(self, experiment: Experiment) -> float:
         """Calculates the statistical significance of the delta.
         Based on https://www.evanmiller.org/how-not-to-run-an-ab-test.html
